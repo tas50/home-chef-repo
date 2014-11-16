@@ -25,7 +25,7 @@ include ::Opscode::Ark::ProviderHelpers
 
 # From resources/default.rb
 # :install, :put, :dump, :cherry_pick, :install_with_make, :configure, :setup_py_build, :setup_py_install, :setup_py
-
+#
 # Used in test.rb
 # :install, :put, :dump, :cherry_pick, :install_with_make, :configure
 
@@ -33,6 +33,7 @@ include ::Opscode::Ark::ProviderHelpers
 # action :install
 #################
 action :install do
+  show_deprecations
   set_paths
 
   directory new_resource.path do
@@ -42,9 +43,9 @@ action :install do
   end
 
   remote_file new_resource.release_file do
-    Chef::Log.debug("DEBUG: new_resource.release_file")
+    Chef::Log.debug('DEBUG: new_resource.release_file')
     source new_resource.url
-    if new_resource.checksum then checksum new_resource.checksum end
+    checksum new_resource.checksum if new_resource.checksum
     action :create
     notifies :run, "execute[unpack #{new_resource.release_file}]"
   end
@@ -60,50 +61,54 @@ action :install do
   end
 
   # set_owner
+  _owner_command = owner_command
   execute "set owner on #{new_resource.path}" do
-    command "/bin/chown -R #{new_resource.owner}:#{new_resource.group} #{new_resource.path}"
+    command _owner_command
     action :nothing
   end
 
-  # symlink binaries
-  new_resource.has_binaries.each do |bin|
-    link ::File.join(new_resource.prefix_bin, ::File.basename(bin)) do
-      to ::File.join(new_resource.path, bin)
+  # usually on windows there is no central directory with executables where the applciations are linked
+  if not node['platform_family'] === 'windows'
+    # symlink binaries
+    new_resource.has_binaries.each do |bin|
+      link ::File.join(new_resource.prefix_bin, ::File.basename(bin)) do
+        to ::File.join(new_resource.path, bin)
+      end
     end
-  end
 
-  # action_link_paths
-  link new_resource.home_dir do
-    to new_resource.path
-  end
+    # action_link_paths
+    link new_resource.home_dir do
+      to new_resource.path
+    end
 
-  # Add to path for interactive bash sessions
-  template "/etc/profile.d/#{new_resource.name}.sh" do
-    cookbook "ark"
-    source "add_to_path.sh.erb"
-    owner "root"
-    group "root"
-    mode "0755"
-    cookbook "ark"
-    variables( :directory => "#{new_resource.path}/bin" )
-    only_if { new_resource.append_env_path }
+    # Add to path for interactive bash sessions
+    template "/etc/profile.d/#{new_resource.name}.sh" do
+      cookbook 'ark'
+      source 'add_to_path.sh.erb'
+      owner 'root'
+      group 'root'
+      mode '0755'
+      cookbook 'ark'
+      variables(:directory => "#{new_resource.path}/bin")
+      only_if { new_resource.append_env_path }
+    end
   end
 
   # Add to path for the current chef-client converge.
   bin_path = ::File.join(new_resource.path, 'bin')
-  ruby_block "adding path to chef-client ENV['PATH']" do
+  ruby_block "adding '#{bin_path}' to chef-client ENV['PATH']" do
     block do
       ENV['PATH'] = bin_path + ':' + ENV['PATH']
     end
-    only_if{ new_resource.append_env_path and ENV['PATH'].scan(bin_path).empty? }
+    only_if { new_resource.append_env_path && ENV['PATH'].scan(bin_path).empty? }
   end
 end
-
 
 ##############
 # action :put
 ##############
 action :put do
+  show_deprecations
   set_put_paths
 
   directory new_resource.path do
@@ -115,7 +120,7 @@ action :put do
   # download
   remote_file new_resource.release_file do
     source new_resource.url
-    if new_resource.checksum then checksum new_resource.checksum end
+    checksum new_resource.checksum if new_resource.checksum
     action :create
     notifies :run, "execute[unpack #{new_resource.release_file}]"
   end
@@ -131,8 +136,9 @@ action :put do
   end
 
   # set_owner
+  _owner_command = owner_command
   execute "set owner on #{new_resource.path}" do
-    command "/bin/chown -R #{new_resource.owner}:#{new_resource.group} #{new_resource.path}"
+    command _owner_command
     action :nothing
   end
 end
@@ -141,6 +147,7 @@ end
 # action :dump
 ###########################
 action :dump do
+  show_deprecations
   set_dump_paths
 
   directory new_resource.path do
@@ -153,7 +160,7 @@ action :dump do
   remote_file new_resource.release_file do
     Chef::Log.debug("DEBUG: new_resource.release_file #{new_resource.release_file}")
     source new_resource.url
-    if new_resource.checksum then checksum new_resource.checksum end
+    checksum new_resource.checksum if new_resource.checksum
     action :create
     notifies :run, "execute[unpack #{new_resource.release_file}]"
   end
@@ -169,8 +176,49 @@ action :dump do
   end
 
   # set_owner
+  _owner_command = owner_command
   execute "set owner on #{new_resource.path}" do
-    command "/bin/chown -R #{new_resource.owner}:#{new_resource.group} #{new_resource.path}"
+    command _owner_command
+    action :nothing
+  end
+end
+
+###########################
+# action :unzip
+###########################
+action :unzip do
+  show_deprecations
+  set_dump_paths
+
+  directory new_resource.path do
+    recursive true
+    action :create
+    notifies :run, "execute[unpack #{new_resource.release_file}]"
+  end
+
+  # download
+  remote_file new_resource.release_file do
+    Chef::Log.debug("DEBUG: new_resource.release_file #{new_resource.release_file}")
+    source new_resource.url
+    checksum new_resource.checksum if new_resource.checksum
+    action :create
+    notifies :run, "execute[unpack #{new_resource.release_file}]"
+  end
+
+  # unpack based on file extension
+  _unzip_command = unzip_command
+  execute "unpack #{new_resource.release_file}" do
+    command _unzip_command
+    cwd new_resource.path
+    environment new_resource.environment
+    notifies :run, "execute[set owner on #{new_resource.path}]"
+    action :nothing
+  end
+
+  # set_owner
+  _owner_command = owner_command
+  execute "set owner on #{new_resource.path}" do
+    command _owner_command
     action :nothing
   end
 end
@@ -179,6 +227,7 @@ end
 # action :cherry_pick
 #####################
 action :cherry_pick do
+  show_deprecations
   set_dump_paths
   Chef::Log.debug("DEBUG: new_resource.creates #{new_resource.creates}")
 
@@ -191,7 +240,7 @@ action :cherry_pick do
   # download
   remote_file new_resource.release_file do
     source new_resource.url
-    if new_resource.checksum then checksum new_resource.checksum end
+    checksum new_resource.checksum if new_resource.checksum
     action :create
     notifies :run, "execute[cherry_pick #{new_resource.creates} from #{new_resource.release_file}]"
   end
@@ -207,17 +256,18 @@ action :cherry_pick do
   end
 
   # set_owner
+  _owner_command = owner_command
   execute "set owner on #{new_resource.path}" do
-    command "/bin/chown -R #{new_resource.owner}:#{new_resource.group} #{new_resource.path}"
+    command _owner_command
     action :nothing
   end
 end
-
 
 ###########################
 # action :install_with_make
 ###########################
 action :install_with_make do
+  show_deprecations
   set_paths
 
   directory new_resource.path do
@@ -227,9 +277,9 @@ action :install_with_make do
   end
 
   remote_file new_resource.release_file do
-    Chef::Log.debug("DEBUG: new_resource.release_file")
+    Chef::Log.debug('DEBUG: new_resource.release_file')
     source new_resource.url
-    if new_resource.checksum then checksum new_resource.checksum end
+    checksum new_resource.checksum if new_resource.checksum
     action :create
     notifies :run, "execute[unpack #{new_resource.release_file}]"
   end
@@ -240,6 +290,7 @@ action :install_with_make do
     command _unpack_command
     cwd new_resource.path
     environment new_resource.environment
+    notifies :run, "execute[set owner on #{new_resource.path}]"
     notifies :run, "execute[autogen #{new_resource.path}]"
     notifies :run, "execute[configure #{new_resource.path}]"
     notifies :run, "execute[make #{new_resource.path}]"
@@ -247,8 +298,15 @@ action :install_with_make do
     action :nothing
   end
 
+  # set_owner
+  _owner_command = owner_command
+  execute "set owner on #{new_resource.path}" do
+    command _owner_command
+    action :nothing
+  end
+
   execute "autogen #{new_resource.path}" do
-    command "./autogen.sh"
+    command './autogen.sh'
     only_if { ::File.exist? "#{new_resource.path}/autogen.sh" }
     cwd new_resource.path
     environment new_resource.environment
@@ -282,10 +340,8 @@ action :install_with_make do
   # end
 end
 
-
-
-
 action :configure do
+  show_deprecations
   set_paths
 
   directory new_resource.path do
@@ -295,9 +351,9 @@ action :configure do
   end
 
   remote_file new_resource.release_file do
-    Chef::Log.debug("DEBUG: new_resource.release_file")
+    Chef::Log.debug('DEBUG: new_resource.release_file')
     source new_resource.url
-    if new_resource.checksum then checksum new_resource.checksum end
+    checksum new_resource.checksum if new_resource.checksum
     action :create
     notifies :run, "execute[unpack #{new_resource.release_file}]"
   end
@@ -308,13 +364,21 @@ action :configure do
     command _unpack_command
     cwd new_resource.path
     environment new_resource.environment
+    notifies :run, "execute[set owner on #{new_resource.path}]"
     notifies :run, "execute[autogen #{new_resource.path}]"
     notifies :run, "execute[configure #{new_resource.path}]"
     action :nothing
   end
 
+  # set_owner
+  _owner_command = owner_command
+  execute "set owner on #{new_resource.path}" do
+    command _owner_command
+    action :nothing
+  end
+
   execute "autogen #{new_resource.path}" do
-    command "./autogen.sh"
+    command './autogen.sh'
     only_if { ::File.exist? "#{new_resource.path}/autogen.sh" }
     cwd new_resource.path
     environment new_resource.environment
