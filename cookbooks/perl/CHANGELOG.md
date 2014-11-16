@@ -3,6 +3,17 @@ perl Cookbook CHANGELOG
 This file is used to list changes made in each version of the perl cookbook.
 
 
+v1.2.4 (2014-06-16)
+-------------------
+- [COOK-4725] Use windows_path to set the PATH
+
+
+v1.2.2
+------
+### New Feature
+- **[COOK-4013](https://tickets.opscode.com/browse/COOK-4013)** - add omnios support to perl cookbook
+
+
 v1.2.0
 ------
 ### Improvement
