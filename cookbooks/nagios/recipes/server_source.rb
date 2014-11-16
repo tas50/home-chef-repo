@@ -1,9 +1,10 @@
 #
-# Author:: Seth Chisamore <schisamo@opscode.com>
+# Author:: Seth Chisamore <schisamo@getchef.com>
+# Author:: Tim Smith <tsmith@limelight.com>
 # Cookbook Name:: nagios
 # Recipe:: server_source
 #
-# Copyright 2011, Opscode, Inc
+# Copyright 2011-2013, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,24 +21,27 @@
 
 # Package pre-reqs
 
-include_recipe "build-essential"
-include_recipe "nagios::client"
-include_recipe "php"
-include_recipe "php::module_gd"
+include_recipe 'build-essential'
+include_recipe 'php::default'
+include_recipe 'php::module_gd'
 
-web_srv = node['nagios']['server']['web_server'].to_sym
+# the source install of nagios from this recipe does not include embedded perl support
+# so unless the user explicitly set the p1_file attribute, we want to clear it
+node.default['nagios']['conf']['p1_file'] = nil
+
+web_srv = node['nagios']['server']['web_server']
 
 case web_srv
-when :apache
-  include_recipe "nagios::apache"
+when 'apache'
+  include_recipe 'nagios::apache'
 else
-  include_recipe "nagios::nginx"
+  include_recipe 'nagios::nginx'
 end
 
 pkgs = value_for_platform_family(
-  [ "rhel","fedora" ] => %w{ openssl-devel gd-devel tar },
-  "debian" => %w{ libssl-dev libgd2-xpm-dev bsd-mailx tar },
-  "default" => %w{ libssl-dev libgd2-xpm-dev bsd-mailx tar }
+  %w( rhel fedora ) => %w( openssl-devel gd-devel tar ),
+  'debian' => %w( libssl-dev libgd2-xpm-dev bsd-mailx tar ),
+  'default' => %w( libssl-dev libgd2-xpm-dev bsd-mailx tar )
 )
 
 pkgs.each do |pkg|
@@ -46,31 +50,65 @@ pkgs.each do |pkg|
   end
 end
 
+user node['nagios']['user'] do
+  action :create
+end
+
 group node['nagios']['group'] do
   members [
     node['nagios']['user'],
-    web_srv == :nginx ? node['nginx']['user'] : node['apache']['user']
+    web_srv == 'nginx' ? node['nginx']['user'] : node['apache']['user']
   ]
-  action :modify
+  action :create
 end
 
 version = node['nagios']['server']['version']
 
-remote_file "#{Chef::Config[:file_cache_path]}/nagios-#{version}.tar.gz" do
-  source "#{node['nagios']['server']['url']}/nagios-#{version}.tar.gz"
+remote_file "#{Chef::Config[:file_cache_path]}/#{node['nagios']['server']['name']}-#{version}.tar.gz" do
+  source "#{node['nagios']['server']['url']}/#{node['nagios']['server']['name']}-#{version}.tar.gz"
   checksum node['nagios']['server']['checksum']
   action :create_if_missing
 end
 
-bash "compile-nagios" do
+node['nagios']['server']['patches'].each do |patch|
+  remote_file "#{Chef::Config[:file_cache_path]}/#{patch}" do
+    source "#{node['nagios']['server']['patch_url']}/#{patch}"
+  end
+end
+
+bash 'extract-nagios' do
   cwd Chef::Config[:file_cache_path]
   code <<-EOH
-    tar zxvf nagios-#{version}.tar.gz
-    cd nagios
+    tar zxvf #{node['nagios']['server']['name']}-#{version}.tar.gz
+  EOH
+  not_if { ::File.exists?("/usr/sbin/#{node['nagios']['server']['name']}") }
+end
+
+node['nagios']['server']['patches'].each do |patch|
+  bash "patch-#{patch}" do
+    cwd Chef::Config[:file_cache_path]
+    code <<-EOF
+      cd #{node['nagios']['server']['src_dir']}
+      patch -p1 --forward --silent --dry-run < '#{Chef::Config[:file_cache_path]}/#{patch}' >/dev/null
+      if [ $? -eq 0 ]; then
+        patch -p1 --forward < '#{Chef::Config[:file_cache_path]}/#{patch}'
+      else
+        exit 0
+      fi
+    EOF
+    action :nothing
+    subscribes :run, 'bash[extract-nagios]', :immediately
+  end
+end
+
+bash 'compile-nagios' do
+  cwd Chef::Config[:file_cache_path]
+  code <<-EOH
+    cd #{node['nagios']['server']['src_dir']}
     ./configure --prefix=/usr \
         --mandir=/usr/share/man \
         --bindir=/usr/sbin \
-        --sbindir=/usr/lib/cgi-bin/nagios3 \
+        --sbindir=/usr/lib/cgi-bin/#{node['nagios']['server']['vname']} \
         --datadir=#{node['nagios']['docroot']} \
         --sysconfdir=#{node['nagios']['conf_dir']} \
         --infodir=/usr/share/info \
@@ -82,55 +120,55 @@ bash "compile-nagios" do
         --with-command-user=#{node['nagios']['user']} \
         --with-command-group=#{node['nagios']['group']} \
         --with-init-dir=/etc/init.d \
-        --with-lockfile=#{node['nagios']['run_dir']}/nagios3.pid \
+        --with-lockfile=#{node['nagios']['run_dir']}/#{node['nagios']['server']['vname']}.pid \
         --with-mail=/usr/bin/mail \
         --with-perlcache \
-        --with-htmurl=/nagios3 \
-        --with-cgiurl=/cgi-bin/nagios3
+        --with-htmurl=/#{node['nagios']['server']['vname']} \
+        --with-cgiurl=/cgi-bin/#{node['nagios']['server']['vname']}
     make all
     make install
     make install-init
     make install-config
     make install-commandmode
   EOH
-  creates "/usr/sbin/nagios"
+  action :nothing
+  subscribes :run, 'bash[extract-nagios]', :immediately
 end
 
-directory "#{node['nagios']['conf_dir']}/conf.d" do
-  owner "root"
-  group "root"
-  mode 00755
+directory node['nagios']['config_dir'] do
+  owner 'root'
+  group 'root'
+  mode '0755'
 end
 
-%w{ cache_dir log_dir run_dir }.each do |dir|
+%w( cache_dir log_dir run_dir ).each do |dir|
 
   directory node['nagios'][dir] do
     owner node['nagios']['user']
     group node['nagios']['group']
-    mode 00755
+    mode '0755'
   end
 
 end
 
-directory "/usr/lib/nagios3" do
+directory ::File.join(node['nagios']['log_dir'], 'archives') do
   owner node['nagios']['user']
   group node['nagios']['group']
-  mode 00755
+  mode '0755'
+end
+
+directory "/usr/lib/#{node['nagios']['server']['vname']}" do
+  owner node['nagios']['user']
+  group node['nagios']['group']
+  mode '0755'
 end
 
 link "#{node['nagios']['conf_dir']}/stylesheets" do
   to "#{node['nagios']['docroot']}/stylesheets"
 end
 
-# if nrpe client is not being installed by source then we need the NRPE plugin
-if node['nagios']['client']['install_method'] == "package"
-
-  include_recipe "nagios::nrpe_source"
-
-end
-
-if web_srv == :apache
-  apache_module "cgi" do
+if web_srv == 'apache'
+  apache_module 'cgi' do
     enable :true
   end
 end

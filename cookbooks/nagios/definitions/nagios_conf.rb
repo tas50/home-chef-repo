@@ -1,13 +1,13 @@
 #
 # Author:: Joshua Sierles <joshua@37signals.com>
-# Author:: Joshua Timberman <joshua@opscode.com>
-# Author:: Nathan Haneysmith <nathan@opscode.com>
-# Author:: Seth Chisamore <schisamo@opscode.com>
+# Author:: Joshua Timberman <joshua@getchef.com>
+# Author:: Nathan Haneysmith <nathan@getchef.com>
+# Author:: Seth Chisamore <schisamo@getchef.com>
 # Cookbook Name:: nagios
 # Definition:: nagios_conf
 #
 # Copyright 2009, 37signals
-# Copyright 2009-2011, Opscode, Inc
+# Copyright 2009-2013, Chef Software, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -21,17 +21,18 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-define :nagios_conf, :variables => {}, :config_subdir => true do
+define :nagios_conf, :variables => {}, :config_subdir => true, :source => nil do
 
   conf_dir = params[:config_subdir] ? node['nagios']['config_dir'] : node['nagios']['conf_dir']
+  params[:source] ||= "#{params[:name]}.cfg.erb"
 
   template "#{conf_dir}/#{params[:name]}.cfg" do
     owner node['nagios']['user']
     group node['nagios']['group']
-    source "#{params[:name]}.cfg.erb"
-    mode 00644
+    source params[:source]
+    mode '0644'
     variables params[:variables]
-    notifies :reload, "service[nagios]"
+    notifies :reload, 'service[nagios]'
     backup 0
   end
 end
