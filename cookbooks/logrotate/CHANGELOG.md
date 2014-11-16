@@ -1,7 +1,63 @@
 logrotate Cookbook CHANGELOG
 ============================
-This file is used to list changes made in each version of the logrotate cookbook.
+This file is used to list changes made in each version of the
+logrotate cookbook.
 
+v1.7.0
+------
+
+### Bugs
+
+- Use `raise` rather than Application.fatal! to prevent killing a
+  daemonized chef-client
+
+### Improvements
+
+- Chefspec matcher for logrotate_app definition
+- Support the following options: compressoptions, maxage,
+  shred/shredcycles, extension, tabooext
+- Add Solaris support
+
+
+v1.6.0
+------
+
+### Bugs
+
+- Fix documentation error
+
+### Improvements
+
+- Support for options "compresscmd", "uncompresscmd", "compressext"
+- Allow nodateext as parameter for logrotate_app definition
+- Move to chefspec ~> 3.0
+
+v1.5.0
+------
+
+### Bugs
+- Fix missing end tag in template
+- Don't re-initialize constants.
+- Fix rubocop finding
+
+### Improvements
+- [COOK-3911] Allow to use maxsize parameter.
+- [COOK-4000] Allow to use dateyesterday option.
+- [COOK-4024] Allow to use su parameter.
+- [COOK-4175] Allows use of the dateformat parameter.
+- Loosen test-kitchen version constraint
+- Add rvm files to gitignore
+
+
+v1.4.0
+------
+### Bug
+- **[COOK-3632](https://tickets.opscode.com/browse/COOK-3632)** - Raise Exception when adding more than one invalid option
+- **[COOK-3141](https://tickets.opscode.com/browse/COOK-3141)** - Do not duplicate template entires for multiple paths
+- **[COOK-3034](https://tickets.opscode.com/browse/COOK-3034)** - Update logrotate_app params to accept arrays and strings
+
+### Improvement
+- **[COOK-2646](https://tickets.opscode.com/browse/COOK-2646)** - Add ability to choose file mode for logrotate template
 
 v1.3.0
 ------
