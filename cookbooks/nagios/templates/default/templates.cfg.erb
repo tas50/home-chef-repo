@@ -32,24 +32,26 @@ define host {
   event_handler_enabled           1
   flap_detection_enabled          <%= nagios_boolean(nagios_attr(:default_host)[:flap_detection]) %>
   failure_prediction_enabled      1
-#  process_perf_data               1
-  process_perf_data               0
+  process_perf_data               <%= nagios_boolean(nagios_attr(:default_host)[:process_perf_data]) %>
   retain_status_information       1
   retain_nonstatus_information    1
   notification_period             24x7
   register                        0
+<% unless nagios_attr(:default_host)[:action_url].nil? %>
+  action_url                      <%= nagios_attr(:default_host)[:action_url] %>
+<% end %>
 }
 
 define host {
   name                    server
   use                     default-host
-  check_period            24x7
+  check_period            <%= nagios_attr(:default_host)[:check_period] %>
   check_interval          <%= nagios_interval(nagios_attr(:default_host)[:check_interval]) %>
   retry_interval          <%= nagios_interval(nagios_attr(:default_host)[:retry_interval]) %>
   max_check_attempts      <%= nagios_attr(:default_host)[:max_check_attempts] %>
-  check_command           check-host-alive
+  check_command           <%= nagios_attr(:default_host)[:check_command] %>
   notification_interval   <%= nagios_interval(nagios_attr(:default_host)[:notification_interval]) %>
-  notification_options    d,u,r
+  notification_options    <%= nagios_attr(:default_host)[:notification_options] %>
   contact_groups          <%= nagios_attr(:default_contact_groups).join(",") %>
   register                0
 }
@@ -65,8 +67,7 @@ define service {
   event_handler_enabled           1
   flap_detection_enabled          <%= nagios_boolean(nagios_attr(:default_service)[:flap_detection]) %>
   failure_prediction_enabled      1
-#  process_perf_data               1
-  process_perf_data               0
+  process_perf_data               <%= nagios_boolean(nagios_attr(:default_service)[:process_perf_data]) %>
   retain_status_information       1
   retain_nonstatus_information    1
   is_volatile                     0
@@ -79,6 +80,9 @@ define service {
   notification_interval           <%= nagios_interval(nagios_attr(:default_service)[:notification_interval]) %>
   notification_period             24x7
   register                        0
+<% unless nagios_attr(:default_service)[:action_url].nil? %>
+  action_url                      <%= nagios_attr(:default_service)[:action_url] %>
+<% end %>
 }
 
 # Define the log monitoring template (monitoring logs is very different)
@@ -96,8 +100,17 @@ define service{
   is_volatile                     1
   }
 
-# Templates defined by data bags
+define service{
+  name                            service-template
+  max_check_attempts              <%= nagios_attr(:default_service)[:max_check_attempts] %>
+  check_interval                  <%= nagios_interval(nagios_attr(:default_service)[:check_interval]) %>
+  retry_interval                  <%= nagios_interval(nagios_attr(:default_service)[:retry_interval]) %>
+  notification_interval           <%= nagios_interval(nagios_attr(:default_service)[:notification_interval]) %>
+  register                        0
+}
+
 <% @templates.each do |template| -%>
+<% if template == @templates.first -%># Templates defined by data bags<% end -%>
 define service {
   name <%= template['id'] %>
   use <% if template['use'].nil? -%>default-service<% else -%><%= template['use'] %><% end -%>
@@ -107,7 +120,7 @@ define service {
   <%= conf %> <%= nagios_interval(template[conf]) %>
     <% end %>
   <% end %>
-  <% %w{passive_checks_enabled parallelize_check obsess_over_service check_freshness notifications_enabled event_handler_enabled flap_detection_enabled failure_prediction_enabled process_perf_data retain_status_information retain_nonstatus_information is_volatile check_period max_check_attempts contact_groups notification_options notification_period notes_url action_url}.each do |conf| %>
+  <% %w{active_checks_enabled passive_checks_enabled parallelize_check obsess_over_service check_freshness freshness_threshold notifications_enabled event_handler_enabled flap_detection_enabled failure_prediction_enabled process_perf_data retain_status_information retain_nonstatus_information is_volatile check_period max_check_attempts contact_groups notification_options notification_period notes_url action_url}.each do |conf| %>
     <% unless template[conf].nil? %>
   <%= conf %> <%= template[conf] %>
     <% end %>
@@ -115,3 +128,45 @@ define service {
 }
 <% end -%>
 
+# Host templates defined by data bags
+<% @hosttemplates.each do |template| -%>
+define host {
+  name <%= template['id'] %>
+  use <% if template['use'].nil? -%>default-host<% else -%><%= template['use'] %><% end -%>
+  register 0
+  <% interval_confs = %w{
+       check_interval
+       retry_interval
+       notification_interval
+     }
+     interval_confs.each do |conf| %>
+    <% unless template[conf].nil? %>
+  <%= conf %> <%= nagios_interval(template[conf]) %>
+    <% end %>
+  <% end %>
+  <% confs = %w{
+       action_url
+       check_freshness
+       check_period
+       contact_groups
+       check_command
+       event_handler_enabled
+       flap_detection_enabled
+       max_check_attempts
+       notes_url
+       notification_options
+       notification_period
+       notifications_enabled
+       obsess_over_host
+       passive_checks_enabled
+       process_perf_data
+       retain_nonstatus_information
+       retain_status_information
+     }
+     confs.each do |conf| %>
+    <% unless template[conf].nil? %>
+  <%= conf %> <%= template[conf] %>
+    <% end %>
+  <% end %>
+}
+<% end -%>

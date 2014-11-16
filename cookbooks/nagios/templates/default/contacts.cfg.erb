@@ -17,7 +17,7 @@ define contact {
 define contactgroup {
   contactgroup_name admins
   alias             Nagios Administrators
-  members           <%= @members.join(',') %><%= ",pagerduty" unless node['nagios']['pagerduty_key'].empty? %>
+  members           <%= @members.join(',') %>
 }
 
 define contactgroup {
@@ -27,16 +27,19 @@ define contactgroup {
 }
 
 <% @admins.each do |a| -%>
+<% # don't template out contacts that don't have the nagios hash or a nagios e-mail defined %>
+<% unless a['nagios'].nil? || a['nagios']['email'].nil?  -%>
 define contact {
   use          default-contact
   contact_name <%= a['id'] %>
-  <%= "email  #{a['nagios']['email']}" unless a['nagios'].nil? || a['nagios']['email'].nil? %>
+  email        <%= a['nagios']['email'] %>
 }
+<% end -%>
 
 <% end -%>
 
-# Contacts from data bags
 <% @contacts.each do |contact| -%>
+<% if contact == @contacts.first -%># Contacts from data bags<% end -%>
 define contact {
   name <%= contact['id'] %>
   contact_name <%= contact['id'] %>
@@ -46,10 +49,10 @@ define contact {
   <% end %>
   <% end %>
 }
-<% end %>
+<% end -%>
 
-# Contact Groupss from data bags
 <% @contactgroups.each do |contactgroup| -%>
+<% if contactgroup == @contactgroups.first -%># Contact Groups from data bags<% end -%>
 define contactgroup {
   contactgroup_name <%= contactgroup['id'] %>
   <% %w{alias members contactgroup_members}.each do |conf| %>
@@ -58,14 +61,16 @@ define contactgroup {
   <% end %>
   <% end %>
 }
-<% end %>
+<% end -%>
 
-# Service escalations defined by data bags
 <% @serviceescalations.each do |serviceescalation| -%>
+<% if serviceescalation == @serviceescalations.first -%># Service escalations defined by data bags<% end -%>
 define serviceescalation {
   name <%= serviceescalation['id'] %>
+  <% unless serviceescalation['register'] %>
   register 0
-  <% %w{use contact_groups first_notification last_notification escalation_period notification_interval}.each do |conf| %>
+  <% end %>
+  <% %w{use contacts contact_groups first_notification last_notification escalation_period escalation_options notification_interval host_name hostgroup_name service_description}.each do |conf| %>
   <% unless serviceescalation[conf].nil? %>
   <%= conf %> <%= serviceescalation[conf] %>
   <% end %>
@@ -73,3 +78,17 @@ define serviceescalation {
 }
 <% end -%>
 
+<% @hostescalations.each do |hostescalation| -%>
+<% if hostescalation == @hostescalations.first -%># Host escalations defined by data bags<% end -%>
+define hostescalation {
+  name <%= hostescalation['id'] %>
+  <% unless hostescalation['register'] %>
+  register 0
+  <% end %>
+  <% %w{use host_name hostgroup_name contacts contact_groups first_notification last_notification notification_interval escalation_period escalation_options}.each do |conf| %>
+  <% unless hostescalation[conf].nil? %>
+  <%= conf %> <%= hostescalation[conf] %>
+  <% end %>
+  <% end %>
+}
+<% end -%>
