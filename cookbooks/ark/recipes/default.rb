@@ -18,14 +18,10 @@
 # limitations under the License.
 #
 
+Array(node['ark']['package_dependencies']).each do |pkg|
+  package pkg
+end
 
-package "unzip"
-package "libtool"
-package "rsync"
-package "autoconf"
-package "make"
-package "autogen" unless platform_family?("rhel", "fedora")
-
-if platform?("freebsd")
-  package "gtar"
+if node['platform_family'] === 'windows'
+  include_recipe "7-zip"
 end
