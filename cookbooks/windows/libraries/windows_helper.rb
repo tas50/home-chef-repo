@@ -16,19 +16,22 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#
+
 require 'uri'
+require 'Win32API' if Chef::Platform.windows?
+require 'chef/exceptions'
 
 module Windows
   module Helper
 
     AUTO_RUN_KEY = 'HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run'.freeze unless defined?(AUTO_RUN_KEY)
     ENV_KEY = 'HKLM\SYSTEM\CurrentControlSet\Control\Session Manager\Environment'.freeze unless defined?(ENV_KEY)
+    ExpandEnvironmentStrings = Win32API.new('kernel32', 'ExpandEnvironmentStrings', ['P', 'P', 'L'], 'L') if Chef::Platform.windows?
 
     # returns windows friendly version of the provided path,
     # ensures backslashes are used everywhere
     def win_friendly_path(path)
-      path.gsub(::File::SEPARATOR, ::File::ALT_SEPARATOR) if path
+      path.gsub(::File::SEPARATOR, ::File::ALT_SEPARATOR || '\\') if path
     end
 
     # account for Window's wacky File System Redirector
@@ -65,9 +68,9 @@ module Windows
     def cached_file(source, checksum=nil, windows_path=true)
       @installer_file_path ||= begin
 
-        if source =~ ::URI::ABS_URI && %w[http https].include?(URI.parse(source).scheme)
-          uri = ::URI.parse(::URI.unescape(source))
-          cache_file_path = "#{Chef::Config[:file_cache_path]}/#{::File.basename(uri.path)}"
+        if source =~ ::URI::ABS_URI && %w[ftp http https].include?(URI.parse(source).scheme)
+          uri = ::URI.parse(source)
+          cache_file_path = "#{Chef::Config[:file_cache_path]}/#{::File.basename(::URI.unescape(uri.path))}"
           Chef::Log.debug("Caching a copy of file #{source} at #{cache_file_path}")
           r = Chef::Resource::RemoteFile.new(cache_file_path, run_context)
           r.source(source)
@@ -80,6 +83,17 @@ module Windows
 
         windows_path ? win_friendly_path(cache_file_path) : cache_file_path
       end
+    end
+
+    # Expands the environment variables
+    def expand_env_vars(path)
+      # We pick 32k because that is the largest it could be:
+      # http://msdn.microsoft.com/en-us/library/windows/desktop/ms724265%28v=vs.85%29.aspx
+      buf = 0.chr * 32 * 1024 # 32k
+      if ExpandEnvironmentStrings.call(path.dup, buf, buf.length) == 0
+        raise Chef::Exceptions::Win32APIError, "Failed calling ExpandEnvironmentStrings (received 0)"
+      end
+      buf.strip
     end
 
   end
