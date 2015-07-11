@@ -1,0 +1,14 @@
+#!/bin/sh
+
+cat <<EOS
+Name: <%= node['fqdn'] %>
+Chef Version: <%= node['chef_packages']['chef']['version'] %>
+Environment: <%= node.chef_environment %>
+Run List:
+<% node.run_list.each do |item| %>
+ <%= item.to_s %>
+<% end %>
+<% if node['ec2'] %>
+Local IP: <%= node['ipaddress'] %>
+<% end %>
+EOS
