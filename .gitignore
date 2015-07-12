@@ -12,6 +12,3 @@ Gemfile.lock
 .idea
 chef.sublime*
 
-# ignore the link to Tresors
-config/bootstrap_templates
-
