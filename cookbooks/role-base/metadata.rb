@@ -1,11 +1,12 @@
 name             'role-base'
 maintainer       'Tim Smith'
 maintainer_email 'tsmith84@gmail.com'
-license          'All rights reserved'
-description      'Installs/Configures role_base'
+license          'Apache 2.0'
+description      'Base role cookbook for all nodes'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 version          '0.1.0'
 
+depends 'apt'
 depends 'smith-packages'
 depends 'smith-motd'
 depends 'ntp'

@@ -17,6 +17,7 @@
 # limitations under the License.
 #
 
+include_recipe 'apt'
 include_recipe 'smith-packages'
 include_recipe 'ntp'
 include_recipe 'sensors'
