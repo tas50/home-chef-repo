@@ -17,12 +17,8 @@
 # limitations under the License.
 #
 
-node['smith-packages']['install'].each do |pkg|
-  package pkg
-end
+package node['smith-packages']['install']
 
-node['smith-packages']['remove'].each do |pkg|
-  package pkg do
-   action :remove
-  end
+package node['smith-packages']['remove'] do
+ action :remove
 end
