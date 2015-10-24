@@ -20,5 +20,5 @@
 package node['smith-packages']['install']
 
 package node['smith-packages']['remove'] do
- action :remove
+  action :remove
 end
