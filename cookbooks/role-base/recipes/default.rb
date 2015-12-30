@@ -18,6 +18,7 @@
 #
 
 include_recipe 'apt'
+include_recipe 'omnibus_updater'
 include_recipe 'smith-packages'
 include_recipe 'ntp'
 include_recipe 'sensors'
@@ -25,3 +26,4 @@ include_recipe 'smith-motd'
 include_recipe 'build-essential'
 include_recipe 'rsyslog'
 include_recipe 'vim'
+
