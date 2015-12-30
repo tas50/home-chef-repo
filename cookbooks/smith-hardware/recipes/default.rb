@@ -1,8 +1,8 @@
 #
-# Cookbook Name:: role_base
+# Cookbook Name:: smith-hardware
 # Recipe:: default
 #
-# Copyright 2014-2015, Tim Smith
+# Copyright 2015, Tim Smith
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,12 +17,18 @@
 # limitations under the License.
 #
 
-include_recipe 'apt'
-include_recipe 'omnibus_updater'
-include_recipe 'smith-packages'
-include_recipe 'smith-hardware'
-include_recipe 'ntp'
-include_recipe 'smith-motd'
-include_recipe 'build-essential'
-include_recipe 'rsyslog'
-include_recipe 'vim'
+# only run on hardware systems
+return if ( node['virtualization'] && node['virtualization']['role'] == 'guest' ) || node['cloud']
+
+include_recipe 'sensors::_install_lmsensors'
+include_recipe 'smartmontools::default'
+
+apt_repository 'nut-ppa' do
+  uri 'http://ppa.launchpad.net/clepple/nut/ubuntu'
+  distribution node['lsb']['codename']
+  components ['main']
+  keyserver 'keyserver.ubuntu.com'
+  key 'B77076F5 '
+end
+
+include_recipe 'nut'
