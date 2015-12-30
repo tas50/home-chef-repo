@@ -1,4 +1,4 @@
-# smith-motd cookbook
+# smith-hardware cookbook
 This cookbook installs and configures packages for managing hardware systems
 
 # Requirements
@@ -11,7 +11,7 @@ Apply to a node
 none
 
 # Recipes
-default: set the motd
+default: setup sensors, and smart monitoring
 
 # Author
 Author:: Tim Smith (<tsmith84@gmail.com>)

@@ -17,8 +17,12 @@
 # limitations under the License.
 #
 
-# only run on hardware systems
-return if ( node['virtualization'] && node['virtualization']['role'] == 'guest' ) || node['cloud']
+apt_repository 'nut-ppa' do
+  uri 'http://ppa.launchpad.net/clepple/nut/ubuntu'
+  distribution node['lsb']['codename']
+  components ['main']
+  keyserver 'keyserver.ubuntu.com'
+  key 'B77076F5 '
+end
 
-include_recipe 'sensors::_install_lmsensors'
-include_recipe 'smartmontools::default'
+include_recipe 'nut'
