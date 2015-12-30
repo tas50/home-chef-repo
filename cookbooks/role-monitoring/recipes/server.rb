@@ -1,6 +1,6 @@
 #
-# Cookbook Name:: role_monitoring
-# Recipe:: default
+# Cookbook Name:: role-monitoring
+# Recipe:: server
 #
 # Copyright 2014-2015, Tim Smith
 #
@@ -16,3 +16,5 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
+include_recipe 'smith-ups::default'
