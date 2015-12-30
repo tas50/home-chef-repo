@@ -26,4 +26,3 @@ include_recipe 'smith-motd'
 include_recipe 'build-essential'
 include_recipe 'rsyslog'
 include_recipe 'vim'
-
