@@ -1,4 +1,4 @@
-name             'role_monitoring'
+name             'role-monitoring'
 maintainer       'Tim Smith'
 maintainer_email 'tsmith84@gmail.com'
 license          'Apache 2.0'
