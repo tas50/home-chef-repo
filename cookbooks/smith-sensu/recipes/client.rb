@@ -7,9 +7,18 @@ sudo 'sensu' do
   nopasswd  true
 end
 
+# build a list of subscriptions for the node
+subs = []
+subs << node.chef_environment
+subs << 'hardware' unless (node['virtualization'] && node['virtualization']['role'] == 'guest') || node['cloud']
+node.run_list.each do |recipe|
+  next if recipe == 'recipe[role-base]'
+  subs << recipe.to_s.gsub('recipe[','').gsub(']','')
+end
+
 sensu_client node.name do
   address node.ipaddress
-  subscriptions ['production']
+  subscriptions subs
   keepalive(thresholds: { warning: 60,
                           critical: 300
                },
