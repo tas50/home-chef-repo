@@ -1,8 +1,20 @@
 {
   "id": "creds",
-  "password": {
-    "encrypted_data": "Nq6hnuDkH9u8s1NSV5FRBKq7/B3l9AnIKi15azKwAJs=\n",
-    "iv": "/9wg4/7n56V19qSx72ZxfA==\n",
+  "rmq_password": {
+    "encrypted_data": "bNX9kKjNOXPK8vBtgAPkFOdHw2ew2mDSxz2ug4dKUBM=\n",
+    "iv": "lJEeFwTbmW9WsiHaQh3QiQ==\n",
+    "version": 1,
+    "cipher": "aes-256-cbc"
+  },
+  "uchiwa_user": {
+    "encrypted_data": "HoF8eUvlep29/1VZEXjkVB3GgyY0LesZLhjJTuxa9cI=\n",
+    "iv": "REUhu+IWWbLzqPUXBJMUyA==\n",
+    "version": 1,
+    "cipher": "aes-256-cbc"
+  },
+  "uchiwa_password": {
+    "encrypted_data": "PXTINyYm6oSyyUsd4kE6wSqnr1G3pfTN46/haxCb4mM=\n",
+    "iv": "v02hKbSFhSUhotCgXkpOKg==\n",
     "version": 1,
     "cipher": "aes-256-cbc"
   }
