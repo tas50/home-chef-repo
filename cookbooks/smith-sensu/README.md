@@ -11,7 +11,8 @@ Apply to a node
 none
 
 # Recipes
-default: default recipe for installation
+client: client monitoring setup
+server: server with uchiwa UI
 
 # Author
 Author:: Tim Smith (<tsmith84@gmail.com>)
