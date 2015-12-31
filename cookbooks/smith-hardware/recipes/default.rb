@@ -18,7 +18,7 @@
 #
 
 # only run on hardware systems
-return if ( node['virtualization'] && node['virtualization']['role'] == 'guest' ) || node['cloud']
+return if (node['virtualization'] && node['virtualization']['role'] == 'guest') || node['cloud']
 
 include_recipe 'sensors::_install_lmsensors'
 include_recipe 'smartmontools::default'

@@ -5,6 +5,3 @@ metadata
 
 # Common dependencies for all Berksfiles
 cookbook 'apt'
-
-# Dependencies of this cookbook
-cookbook 'smith-ups', path: '../smith-ups'

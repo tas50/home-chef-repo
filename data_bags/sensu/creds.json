@@ -1,0 +1,9 @@
+{
+  "id": "creds",
+  "password": {
+    "encrypted_data": "Nq6hnuDkH9u8s1NSV5FRBKq7/B3l9AnIKi15azKwAJs=\n",
+    "iv": "/9wg4/7n56V19qSx72ZxfA==\n",
+    "version": 1,
+    "cipher": "aes-256-cbc"
+  }
+}

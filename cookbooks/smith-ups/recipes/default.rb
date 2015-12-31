@@ -34,4 +34,3 @@ execute 'setup_usb_hotplug' do
   notifies :restart, 'service[nut-client]'
   notifies :restart, 'service[nut-server]'
 end
-

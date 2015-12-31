@@ -17,4 +17,6 @@
 # limitations under the License.
 #
 
+
 include_recipe 'smith-ups::default'
+include_recipe 'smith-sensu::server'
