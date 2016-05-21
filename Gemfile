@@ -9,6 +9,6 @@ end
 
 group :test do
   gem 'reagan', '~> 1.0'
-  gem 'rubocop', '~> 0.35'
-  gem 'foodcritic', '~> 5.0'
+  gem 'rubocop', '~> 0.40'
+  gem 'foodcritic', '~> 6.3'
 end
