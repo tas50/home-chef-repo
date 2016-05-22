@@ -16,8 +16,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+apt_update 'update_repos'
 
-include_recipe 'apt'
 include_recipe 'omnibus_updater'
 include_recipe 'smith-packages'
 include_recipe 'smith-hardware'
