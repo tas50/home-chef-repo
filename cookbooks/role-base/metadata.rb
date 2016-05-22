@@ -4,7 +4,7 @@ maintainer_email 'tsmith84@gmail.com'
 license          'Apache 2.0'
 description      'Base role cookbook for all nodes'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-version          '0.3.0'
+version          '0.3.1'
 
 depends 'apt'
 depends 'smith-packages'
