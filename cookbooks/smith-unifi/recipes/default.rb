@@ -17,4 +17,16 @@
 # limitations under the License.
 #
 
-include_recipe 'smith-unifi'
+package 'nginx'
+
+file '/etc/nginx/sites-enabled/default' do
+  action :delete
+  notifies :restart, 'service[nginx]'
+end
+
+service 'nginx' do
+  supports :status => true, :restart => true
+  action [:enable, :start]
+end
+
+include_recipe 'unifi'

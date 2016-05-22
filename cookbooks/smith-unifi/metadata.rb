@@ -1,9 +1,9 @@
-name             'role-unifi'
+name             'smith-unifi'
 maintainer       'Tim Smith'
 maintainer_email 'tsmith84@gmail.com'
 license          'Apache 2.0'
-description      'Role cookbook for the unifi host'
+description      'Wrapper cookbook for installing unifi controller'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-version          '0.2.0'
+version          '0.1.0'
 
-depends 'smith-unifi'
+depends 'unifi'
