@@ -1,3 +1,2 @@
 ---
 common_cookbooks: # cookbooks to include in every Berksfile even if metadata doesn't specify them
- - apt
