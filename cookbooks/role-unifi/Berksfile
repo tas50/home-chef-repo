@@ -3,5 +3,4 @@
 source 'https://supermarket.chef.io'
 metadata
 
-# Common dependencies for all Berksfiles
-cookbook 'apt'
+cookbook 'unifi', git: 'git://github.com/tas50/unifi.git'
