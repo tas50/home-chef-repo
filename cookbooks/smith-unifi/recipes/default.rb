@@ -24,6 +24,34 @@ file '/etc/nginx/sites-enabled/default' do
   notifies :restart, 'service[nginx]'
 end
 
+template '/etc/nginx/sites-available/unifi' do
+  action :create
+  notifies :restart, 'service[nginx]'
+end
+
+link '/etc/nginx/sites-enabled/unifi' do
+  to '/etc/nginx/sites-available/unifi'
+  notifies :restart, 'service[nginx]'
+end
+
+execute 'generate dhparams' do
+  command 'openssl dhparam -out /etc/nginx/dhparam.pem 2048'
+  creates '/etc/nginx/dhparam.pem'
+end
+
+dbag = data_bag_item('certificates', 'unifi')
+
+
+file '/etc/nginx/unifi.smith.dmz.crt' do
+  content dbag['crt']
+  sensitive true
+end
+
+file '/etc/nginx/unifi.smith.dmz.key' do
+  content dbag['key']
+  sensitive true
+end
+
 service 'nginx' do
   supports :status => true, :restart => true
   action [:enable, :start]
