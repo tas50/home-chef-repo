@@ -19,10 +19,10 @@
 
 apt_repository 'nut-ppa' do
   uri 'http://ppa.launchpad.net/clepple/nut/ubuntu'
-  distribution node['lsb']['codename']
+  distribution 'trusty'
   components ['main']
   keyserver 'keyserver.ubuntu.com'
-  key 'B77076F5 '
+  key 'B77076F5'
 end
 
 include_recipe 'nut'
