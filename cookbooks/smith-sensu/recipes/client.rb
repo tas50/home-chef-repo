@@ -3,7 +3,7 @@ include_recipe 'sensu::default'
 # sensu needs sudo for certain checks
 sudo 'sensu' do
   user 'sensu'
-  commands  ['/usr/sbin/smartctl']
+  commands  ['/usr/sbin/smartctl', '/opt/sensu/embedded/bin/check-disk-usage.rb']
   nopasswd  true
 end
 
