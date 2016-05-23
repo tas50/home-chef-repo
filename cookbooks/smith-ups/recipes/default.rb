@@ -18,11 +18,24 @@
 #
 
 apt_repository 'nut-ppa' do
-  uri 'http://ppa.launchpad.net/clepple/nut/ubuntu'
-  distribution 'trusty'
+  uri 'http://ppa.launchpad.net/mamarley/updates/ubuntu'
   components ['main']
   keyserver 'keyserver.ubuntu.com'
-  key 'B77076F5'
+  key '40618B66'
+end
+
+# this PPA includes other packages I don't want so set the priority for the whole
+# repo down low, but set the nut packages up high so we still get them
+apt_preference 'mamarley_ppa' do
+  glob         '*'
+  pin          'origin ppa.launchpad.net'
+  pin_priority '400'
+end
+
+apt_preference 'nut_packages' do
+  glob         '*nut*'
+  pin          'origin ppa.launchpad.net'
+  pin_priority '700'
 end
 
 include_recipe 'nut'
