@@ -1,2 +1,7 @@
 ---
-common_cookbooks: # cookbooks to include in every Berksfile even if metadata doesn't specify them
+cookbooks_root: cookbooks
+
+excluded_cookbooks:
+ - smith-ups
+ - smith-unifi
+

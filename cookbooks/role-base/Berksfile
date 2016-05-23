@@ -3,8 +3,6 @@
 source 'https://supermarket.chef.io'
 metadata
 
-# Common dependencies for all Berksfiles
-cookbook 'apt'
 
 # Dependencies of this cookbook
 cookbook 'smith-hardware', path: '../smith-hardware'
