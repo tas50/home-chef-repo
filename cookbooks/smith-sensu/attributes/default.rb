@@ -1,8 +1,8 @@
 sensu_keys = Chef::EncryptedDataBagItem.load('sensu', 'creds')
-default['sensu']['rabbitmq']['host'] = '172.16.1.213'
+default['sensu']['rabbitmq']['host'] = 'sensu.smith.dmz'
 default['sensu']['rabbitmq']['password'] = sensu_keys['rmq_password']
-default['sensu']['redis']['host'] = '172.16.1.213'
-default['sensu']['api']['host'] = '172.16.1.213'
+default['sensu']['redis']['host'] = 'sensu.smith.dmz'
+default['sensu']['api']['host'] = 'sensu.smith.dmz'
 default['sensu']['use_ssl'] = false
 default['sensu']['use_embedded_ruby'] = true
 default['sensu']['version'] = '0.23.2-2'
