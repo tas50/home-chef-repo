@@ -3,3 +3,4 @@
 source 'https://supermarket.chef.io'
 metadata
 
+cookbook 'zoneminder', git: 'git://github.com/tas50/zoneminder-cookbook.git'

@@ -2,5 +2,3 @@
 
 source 'https://supermarket.chef.io'
 metadata
-
-cookbook 'unifi', git: 'git://github.com/tas50/unifi.git'
