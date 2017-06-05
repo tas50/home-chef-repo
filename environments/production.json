@@ -13,10 +13,6 @@
     "rsyslog": {
       "server_search": "role:rsyslog",
       "preserve_fqdn": true
-    },
-    "omnibus_updater": {
-      "version": "12.10.24",
-      "prevent_downgrade": true
     }
   }
 }
