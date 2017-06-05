@@ -16,14 +16,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-apt_update 'update_repos'
+apt_update
 
-include_recipe 'omnibus_updater'
+include_recipe 'chef_client_updater'
 include_recipe 'smith-packages'
 include_recipe 'smith-hardware'
 include_recipe 'ntp'
 include_recipe 'smith-motd'
 include_recipe 'build-essential'
-include_recipe 'rsyslog'
 include_recipe 'vim'
-include_recipe 'smith-sensu::client'
