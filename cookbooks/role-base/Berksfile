@@ -3,7 +3,6 @@
 source 'https://supermarket.chef.io'
 metadata
 
-
 # Dependencies of this cookbook
 cookbook 'smith-hardware', path: '../smith-hardware'
 cookbook 'smith-motd',     path: '../smith-motd'

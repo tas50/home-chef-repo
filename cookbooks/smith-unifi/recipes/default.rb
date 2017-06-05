@@ -41,7 +41,6 @@ end
 
 dbag = data_bag_item('certificates', 'unifi')
 
-
 file '/etc/nginx/unifi.smith.dmz.crt' do
   content dbag['crt']
   sensitive true

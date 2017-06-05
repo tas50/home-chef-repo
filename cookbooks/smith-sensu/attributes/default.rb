@@ -15,7 +15,7 @@ default['redisio']['servers'] = [
     'appendonly' => 'no',
     'logfile' => '/var/log/redis/sensu.log',
     'configdir' => node[:redisio][:default_settings][:configdir],
-    'user' => 'redis' }
+    'user' => 'redis' },
 ]
 default['uchiwa']['install_method'] = 'http'
 default['uchiwa']['settings']['user'] = sensu_keys['uchiwa_user']
