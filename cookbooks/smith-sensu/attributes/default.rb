@@ -1,4 +1,4 @@
-sensu_keys = Chef::EncryptedDataBagItem.load('sensu', 'creds')
+sensu_keys = data_bag.load('sensu', 'creds')
 default['sensu']['rabbitmq']['host'] = 'sensu.smith.dmz'
 default['sensu']['rabbitmq']['password'] = sensu_keys['rmq_password']
 default['sensu']['redis']['host'] = 'sensu.smith.dmz'
@@ -10,11 +10,11 @@ default['redisio']['version'] = '2.8.24'
 default['redisio']['servers'] = [
   { 'port' => '6379',
     'name' => 'sensu',
-    'datadir' => "#{node[:redisio][:datadir]}/sensu",
+    'datadir' => "#{node['redisio']['datadir']}/sensu",
     'requirepass' => nil,
     'appendonly' => 'no',
     'logfile' => '/var/log/redis/sensu.log',
-    'configdir' => node[:redisio][:default_settings][:configdir],
+    'configdir' => node['redisio']['default_settings']['configdir'],
     'user' => 'redis' },
 ]
 default['uchiwa']['install_method'] = 'http'

@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-package 'update-motd' if node.platform == 'ubuntu'
+package 'update-motd' if platform?('ubuntu')
 
 # make sure the dir is there on debian
 directory '/etc/update-motd.d'

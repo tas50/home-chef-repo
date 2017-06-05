@@ -17,7 +17,7 @@ node.run_list.each do |recipe|
 end
 
 sensu_client node.name do
-  address node.ipaddress
+  address node['ipaddress']
   subscriptions subs
   keepalive(thresholds: { warning: 60,
                           critical: 300 },
