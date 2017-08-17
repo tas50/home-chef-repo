@@ -2,3 +2,5 @@ source 'https://supermarket.chef.io'
 metadata
 
 cookbook 'nut', git: 'git://github.com/tas50/cookbooks-nut'
+
+source chef_repo: ".."

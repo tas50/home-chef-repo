@@ -3,5 +3,4 @@
 source 'https://supermarket.chef.io'
 metadata
 
-# Dependencies of this cookbook
-cookbook 'smith-ups', path: '../smith-ups'
+source chef_repo: ".."

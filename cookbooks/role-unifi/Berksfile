@@ -3,5 +3,4 @@
 source 'https://supermarket.chef.io'
 metadata
 
-# Dependencies of this cookbook
-cookbook 'smith-unifi', path: '../smith-unifi'
+source chef_repo: ".."
