@@ -1,4 +1,4 @@
-sensu_keys = data_bag.load('sensu', 'creds')
+sensu_keys = Chef::EncryptedDataBagItem.load('sensu', 'creds')
 default['sensu']['rabbitmq']['host'] = 'sensu.smith.dmz'
 default['sensu']['rabbitmq']['password'] = sensu_keys['rmq_password']
 default['sensu']['redis']['host'] = 'sensu.smith.dmz'
