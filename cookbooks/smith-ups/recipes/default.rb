@@ -27,8 +27,8 @@ end
 include_recipe 'nut'
 
 execute 'setup_usb_hotplug' do
-  command 'cp /lib/udev/rules.d/62-nut-usbups.rules /etc/udev/rules.d/'
-  creates '/etc/udev/rules.d/62-nut-usbups.rules'
+  command 'cp /lib/udev/rules.d/52-nut-usbups.rules /etc/udev/rules.d/'
+  creates '/etc/udev/rules.d/52-nut-usbups.rules'
   action :run
   notifies :restart, 'service[nut-client]'
   notifies :restart, 'service[nut-server]'
