@@ -20,4 +20,4 @@ default['redisio']['servers'] = [
 default['uchiwa']['install_method'] = 'http'
 default['uchiwa']['settings']['user'] = sensu_keys['uchiwa_user']
 default['uchiwa']['settings']['pass'] = sensu_keys['uchiwa_password']
-default['uchiwa']['version'] = '0.14.5-1'
+default['uchiwa']['version'] = '0.25.3-1'
