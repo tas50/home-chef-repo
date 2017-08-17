@@ -18,24 +18,10 @@
 #
 
 apt_repository 'nut-ppa' do
-  uri 'http://ppa.launchpad.net/mamarley/updates/ubuntu'
+  uri 'http://ppa.launchpad.net/tjormola/nut-unstable/ubuntu'
   components ['main']
   keyserver 'keyserver.ubuntu.com'
-  key '40618B66'
-end
-
-# this PPA includes other packages I don't want so set the priority for the whole
-# repo down low, but set the nut packages up high so we still get them
-apt_preference 'mamarley_ppa' do
-  glob         '*'
-  pin          'origin ppa.launchpad.net'
-  pin_priority '400'
-end
-
-apt_preference 'nut_packages' do
-  glob         '*nut*'
-  pin          'origin ppa.launchpad.net'
-  pin_priority '700'
+  key '176307B282F541DEDF70B917E0F8E8171FE06F95'
 end
 
 include_recipe 'nut'
