@@ -1,7 +1,0 @@
----
-cookbooks_root: cookbooks
-
-excluded_cookbooks:
- - smith-ups
- - smith-unifi
-
