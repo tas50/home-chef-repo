@@ -4,10 +4,10 @@ maintainer_email 'tsmith84@gmail.com'
 license          'Apache-2.0'
 description      'Installs and configures packages for manging hardware systems'
 long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
-version          '0.2.1'
+version          '0.3.0'
 depends 'sensors', '~> 1.1'
 depends 'smartmontools', '~> 1.0'
 
-chef_version '>= 12'
+chef_version '>= 13'
 supports 'debian'
 supports 'ubuntu'

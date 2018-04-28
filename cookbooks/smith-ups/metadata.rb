@@ -7,6 +7,6 @@ long_description IO.read(File.join(File.dirname(__FILE__), 'README.md'))
 version          '0.3.2'
 depends 'nut', '~> 0.0.4'
 
-chef_version '>= 12'
+chef_version '>= 13'
 supports 'debian'
 supports 'ubuntu'
