@@ -2,7 +2,7 @@
 # Cookbook Name:: role_base
 # Recipe:: default
 #
-# Copyright 2014-2015, Tim Smith
+# Copyright 2014-2018, Tim Smith
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,6 +16,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+
 apt_update
 
 include_recipe 'chef_client_updater'
@@ -23,6 +24,8 @@ include_recipe 'smith-packages'
 include_recipe 'smith-hardware'
 include_recipe 'ntp'
 include_recipe 'smith-motd'
-include_recipe 'build-essential'
+
+build_essential 'install compilation tools'
+
 include_recipe 'vim'
 include_recipe 'smith-sensu::client'
