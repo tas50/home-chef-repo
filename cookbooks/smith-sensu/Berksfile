@@ -3,7 +3,7 @@
 source 'https://supermarket.chef.io'
 metadata
 
-source chef_repo: ".."
+source chef_repo: '..'
 
 # waiting on the chef 13 compatible release
 cookbook 'redisio', git: 'git://github.com/brianbianco/redisio'

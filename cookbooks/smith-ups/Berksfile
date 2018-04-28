@@ -3,4 +3,4 @@ metadata
 
 cookbook 'nut', git: 'git://github.com/tas50/cookbooks-nut'
 
-source chef_repo: ".."
+source chef_repo: '..'

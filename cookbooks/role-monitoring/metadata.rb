@@ -9,6 +9,6 @@ version          '0.3.0'
 depends 'smith-ups'
 depends 'smith-sensu'
 
-chef_version '>= 13'
+chef_version '>= 14'
 supports 'debian'
 supports 'ubuntu'
