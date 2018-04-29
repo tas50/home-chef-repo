@@ -8,6 +8,6 @@ version          '0.3.0'
 depends 'sensors', '~> 1.1'
 depends 'smartmontools', '~> 1.0'
 
-chef_version '>= 13'
+chef_version '>= 14'
 supports 'debian'
 supports 'ubuntu'

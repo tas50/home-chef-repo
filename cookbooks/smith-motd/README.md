@@ -1,17 +1,7 @@
 # smith-motd cookbook
-This cookbook sets a sane motd on the servers.  No mention of juju, hwe enablement packags, or new distro releases.
 
-# Requirements
-none
-
-# Usage
-Apply to a node
-
-# Attributes
-none
-
-# Recipes
-default: set the motd
+This cookbook sets a sane motd on the servers. No mention of juju, hwe enablement packages, or new distro releases.
 
 # Author
-Author:: Tim Smith (<tsmith84@gmail.com>)
+
+Author:: Tim Smith ([tsmith84@gmail.com](mailto:tsmith84@gmail.com))

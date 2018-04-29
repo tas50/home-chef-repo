@@ -8,6 +8,6 @@ version          '0.3.0'
 
 depends 'smith-unifi'
 
-chef_version '>= 13'
+chef_version '>= 14'
 supports 'debian'
 supports 'ubuntu'

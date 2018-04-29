@@ -8,6 +8,6 @@ version          '0.2.0'
 
 depends 'zoneminder'
 
-chef_version '>= 13'
+chef_version '>= 14'
 supports 'debian'
 supports 'ubuntu'
