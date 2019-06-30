@@ -5,4 +5,4 @@ metadata
 
 # bumps dep to 12.14 and removes yum/apt
 cookbook 'uchiwa', git: 'git://github.com/tas50/uchiwa-chef'
-cookbook 'sensu', git: 'git://github.com/tas50/sensu-chef', branch: "develop"
+cookbook 'sensu', git: 'git://github.com/tas50/sensu-chef', branch: 'develop'

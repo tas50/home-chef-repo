@@ -1,8 +1,8 @@
 #
-# Cookbook Name:: role_nas
+# Cookbook:: role_nas
 # Recipe:: default
 #
-# Copyright 2014-2018, Tim Smith
+# Copyright:: 2014-2018, Tim Smith
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.

@@ -1,8 +1,8 @@
 #
-# Cookbook Name:: role-zoneminder
+# Cookbook:: role-zoneminder
 # Recipe:: server
 #
-# Copyright 2016, Tim Smith
+# Copyright:: 2016, Tim Smith
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
