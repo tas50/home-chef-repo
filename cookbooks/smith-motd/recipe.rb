@@ -2,7 +2,7 @@
 # Cookbook:: smith-motd
 # Recipe:: default
 #
-# Copyright:: 2014-2015, Tim Smith
+# Copyright:: 2014-2019, Tim Smith
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
